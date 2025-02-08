@@ -24,7 +24,7 @@ A minimalist, browser-based text editor with modern features and a clean interfa
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/gtsrhythm/lide.git
+   git clone https://github.com/gtsrhythm/Lide.git
    cd lide
    ```
 
