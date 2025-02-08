@@ -2,6 +2,11 @@
 
 A minimalist, browser-based text editor with modern features and a clean interface.
 
+## Images
+![LIDE_ONE](https://github.com/user-attachments/assets/4b32890d-c301-4fdc-bbed-bdc0640f0423)
+![LIDE_TWO](https://github.com/user-attachments/assets/44e88b5b-1ad4-403f-883a-1b58e732ee92)
+![LIDE_THREE](https://github.com/user-attachments/assets/20b9a690-8745-4979-92d0-3a2dc9287a07)
+
 ## Features
 
 - 🚀 Fast and lightweight
