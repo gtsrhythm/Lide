@@ -1,1 +1,263 @@
-GitHub Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LIDE - A powerful .mne editor with Lua automation capabilities. Features syntax highlighting, real-time preview, and embedded Lua scripting.">
+    <title>LIDE - Lua Integrated Development Environment</title>
+    
+    <!-- Resource hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="assets/icon.png" as="image">
+    
+    <!-- Optimized font loading -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/icon.png" alt="LIDE Logo">
+                LIDE
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#" class="docs-trigger">Documentation</a>
+                <a href="https://github.com/gtsrhythm/Lide" target="_blank">GitHub</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <img src="assets/icon.png" alt="LIDE Logo">
+            <h1>The Lua-Powered<br>MNE Editor</h1>
+            <p class="subtitle">Open source. Modern. Extensible.</p>
+            <div class="button-group">
+                <a href="https://github.com/gtsrhythm/Lide" target="_blank" class="action-button">
+                    <span class="material-icons">code</span>
+                    View Source
+                </a>
+                <a href="documentation.html" class="action-button">
+                    <span class="material-icons">description</span>
+                    View Documentation
+                </a>
+            </div>
+        </section>
+
+        <section class="showcase">
+            <h2>See LIDE in Action</h2>
+            <div class="showcase-grid">
+                <img src="assets/LIDE_ONE.png" alt="LIDE Interface Screenshot 1" loading="lazy">
+                <img src="assets/LIDE_TWO.png" alt="LIDE Interface Screenshot 2" loading="lazy">
+                <img src="assets/LIDE_THREE.png" alt="LIDE Interface Screenshot 3" loading="lazy">
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="feature-card">
+                <span class="material-icons">description</span>
+                <h3>.mne Support</h3>
+                <p>First-class support for .mne files with syntax highlighting</p>
+            </div>
+            <div class="feature-card">
+                <span class="material-icons">extension</span>
+                <h3>Lua Scripting</h3>
+                <p>Automate your workflow with embedded Lua scripts</p>
+            </div>
+            <div class="feature-card">
+                <span class="material-icons">auto_awesome</span>
+                <h3>Smart Preview</h3>
+                <p>Real-time preview with custom rendering options</p>
+            </div>
+        </section>
+
+        <section class="features-subtle">
+            <div class="features-subtle-container">
+                <h2 class="features-subtle-title">Additional Features</h2>
+                <div class="features-subtle-grid">
+                    <div class="feature-subtle">
+                        <span>🚀</span>
+                        <p>Fast and lightweight</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>📝</span>
+                        <p>Real-time .mne preview</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>🎨</span>
+                        <p>Multiple themes</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>⚡</span>
+                        <p>Auto-save & backup</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>📁</span>
+                        <p>File tree workspace</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>⚙️</span>
+                        <p>Customizable settings</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>🔤</span>
+                        <p>Multiple font families</p>
+                    </div>
+                    <div class="feature-subtle">
+                        <span>📏</span>
+                        <p>Line wrapping</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 LIDE. All rights reserved.</p>
+    </footer>
+
+    <div class="modal" id="imageModal">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <div class="docs-modal" id="docsModal">
+        <div class="docs-content">
+            <span class="docs-close">&times;</span>
+            <div class="docs-sidebar">
+                <nav class="docs-nav">
+                    <a href="#" data-section="requirements" class="active">Requirements</a>
+                    <a href="#" data-section="quickstart">Quick Start</a>
+                    <a href="#" data-section="usage">Usage</a>
+                    <a href="#" data-section="contributing">Contributing</a>
+                </nav>
+            </div>
+            <div class="docs-main">
+                <div class="docs-section" id="requirements">
+                    <h2>Requirements</h2>
+                    <p>Before installing LIDE, ensure your system meets these requirements:</p>
+                    <ul class="requirements-list">
+                        <li>Python 3.7 or higher</li>
+                        <li>Flask 2.0.1</li>
+                        <li>Modern web browser (Chrome, Firefox, Safari, Edge)</li>
+                    </ul>
+                </div>
+                <div class="docs-section" id="quickstart">
+                    <h2>Quick Start</h2>
+                    <p>Get LIDE up and running in minutes with these simple steps:</p>
+                    <div class="code-block">
+                        <h3>1. Clone the repository:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">git clone https://github.com/gtsrhythm/Lide.git
+cd lide</code></pre>
+                        
+                        <h3>2. Run the setup script:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">chmod +x run.sh
+./run.sh</code></pre>
+                        
+                        <h3>3. Open your browser and navigate to:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">http://localhost:5000</code></pre>
+                    </div>
+
+                    <h3>Development Setup</h3>
+                    <p>For development purposes, follow these additional steps:</p>
+                    <div class="code-block">
+                        <h3>1. Create a virtual environment:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate</code></pre>
+                        
+                        <h3>2. Install dependencies:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">pip install -r requirements.txt</code></pre>
+                        
+                        <h3>3. Run in development mode:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">./run.sh dev</code></pre>
+                    </div>
+
+                    <h3>Deployment</h3>
+                    <p>For production deployment, you have two options:</p>
+                    <div class="code-block">
+                        <h3>1. Standard Deployment:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">./run.sh prod</code></pre>
+                        
+                        <h3>2. Using Docker:</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">docker build -t lide .
+docker run -p 8000:8000 lide</code></pre>
+                    </div>
+                </div>
+                <div class="docs-section" id="installation">
+                    <h2>Installation Guide</h2>
+                    <p>Get started with LIDE in just a few minutes. Follow these simple steps to set up your development environment.</p>
+                    <ul class="requirements-list">
+                        <li>Python 3.7 or higher</li>
+                        <li>Flask 2.0.1+</li>
+                        <li>Modern web browser</li>
+                        <li>Git (optional)</li>
+                    </ul>
+                </div>
+                <div class="docs-section" id="getting-started">
+                    <h2>Getting Started</h2>
+                    <p>Learn the basics of LIDE and start building your first project.</p>
+                </div>
+                <div class="docs-section" id="features">
+                    <h2>Features Overview</h2>
+                    <p>Explore the powerful features that make LIDE unique.</p>
+                </div>
+                <div class="docs-section" id="api">
+                    <h2>API Reference</h2>
+                    <p>Complete documentation of LIDE's API and integration options.</p>
+                </div>
+                <div class="docs-section" id="advanced">
+                    <h2>Advanced Usage</h2>
+                    <p>Dive deep into LIDE's advanced features and customization options.</p>
+                </div>
+                <div class="docs-section" id="usage">
+                    <h2>Usage Guide</h2>
+                    <h3>Configuration</h3>
+                    <p>The editor can be configured through the settings panel (⚙️):</p>
+                    <ul class="requirements-list">
+                        <li>Interface density (Compact/Comfortable/Spacious)</li>
+                        <li>Theme selection</li>
+                        <li>Font family</li>
+                        <li>Auto-save preferences</li>
+                        <li>File display options</li>
+                    </ul>
+                </div>
+                <div class="docs-section" id="contributing">
+                    <h2>Contributing</h2>
+                    <h3>Directory Structure</h3>
+                    <pre class="code-block-pre"><code class="language-bash">lide/
+├── app.py              # Flask application
+├── requirements.txt    # Python dependencies
+├── run.sh             # Setup/run script
+├── static/            # Static assets
+│   ├── style.css      # Styles
+│   ├── script.js      # Main JavaScript
+│   └── mne-parser.js  # MNE file parser
+├── templates/         # HTML templates
+│   └── index.html     # Main page
+└── workspace/         # User files
+    └── .backups/      # Automatic backups</code></pre>
+                    
+                    <h3>Contributing Steps</h3>
+                    <ol class="requirements-list">
+                        <li>Fork the repository</li>
+                        <li>Create your feature branch (<code>git checkout -b feature/amazing-feature</code>)</li>
+                        <li>Commit your changes (<code>git commit -m 'Add amazing feature'</code>)</li>
+                        <li>Push to the branch (<code>git push origin feature/amazing-feature</code>)</li>
+                        <li>Open a Pull Request</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script defer src="static/main.js"></script>
+</body>
+</html>
