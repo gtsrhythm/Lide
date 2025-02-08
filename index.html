@@ -35,7 +35,7 @@
     <main>
         <section class="hero">
             <img src="assets/icon.png" alt="LIDE Logo">
-            <h1>The Lua-Powered<br>MNE Editor</h1>
+            <h1>The Script-Powered<br>MNE Editor</h1>
             <p class="subtitle">Open source. Modern. Extensible.</p>
             <div class="button-group">
                 <a href="https://github.com/gtsrhythm/Lide" target="_blank" class="action-button">
@@ -66,8 +66,8 @@
             </div>
             <div class="feature-card">
                 <span class="material-icons">extension</span>
-                <h3>Lua Scripting</h3>
-                <p>Automate your workflow with embedded Lua scripts</p>
+                <h3>Script-Based Automation</h3>
+                <p>Automate your workflow with embedded scripts</p>
             </div>
             <div class="feature-card">
                 <span class="material-icons">auto_awesome</span>
@@ -134,6 +134,8 @@
                     <a href="#" data-section="requirements" class="active">Requirements</a>
                     <a href="#" data-section="quickstart">Quick Start</a>
                     <a href="#" data-section="usage">Usage</a>
+                    <a href="#" data-section="scripting">Scripting</a>
+                    <a href="#" data-section="automations">Automations</a>
                     <a href="#" data-section="contributing">Contributing</a>
                 </nav>
             </div>
@@ -224,6 +226,103 @@ docker run -p 8000:8000 lide</code></pre>
                         <li>Font family</li>
                         <li>Auto-save preferences</li>
                         <li>File display options</li>
+                    </ul>
+                </div>
+                <div class="docs-section" id="scripting">
+                    <h2>Scripting Guide</h2>
+                    <p>Learn how to extend and automate LIDE using its powerful scripting capabilities.</p>
+                    
+                    <h3>Automation Features</h3>
+                    <p>LIDE supports custom automation scripts within .mne files using a simplified scripting syntax. Scripts can be created using either code fences or triple colons:</p>
+                    <div class="code-block">
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">// Using code fences:
+```
+// Your automation code here
+```
+
+// Using triple colons:
+:::automation
+// Your automation code here
+:::</code></pre>
+                    </div>
+
+                    <p>Scripts can be used to:</p>
+                    <ul class="requirements-list">
+                        <li>Automate repetitive tasks</li>
+                        <li>Add custom commands</li>
+                        <li>Extend editor functionality</li>
+                        <li>Create custom workflows</li>
+                    </ul>
+
+                    <h3>Basic Syntax</h3>
+                    <div class="code-block">
+                        <h4>Simple Commands</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">create file.txt
+create src/
+delete file.txt
+print "Hello, World!"</code></pre>
+
+                        <h4>Functions</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">fn setup() {
+    print "Starting setup..."
+    createFile("config.json")
+}
+
+fn cleanup() {
+    print "Cleaning up..."
+}</code></pre>
+
+                        <h4>Tasks</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">task "scaffold" {
+    name: "myproject"
+    template: "basic"
+}</code></pre>
+                    </div>
+
+                    <h3>Built-in Functions</h3>
+                    <div class="code-block">
+                        <h4>File Operations</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">createFile(path, content?) - Create a new file
+deleteFile(path) - Delete a file
+readFile(path) - Read file content
+writeFile(path, content) - Write content to file</code></pre>
+
+                        <h4>Directory Operations</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">createDirectory(path) - Create a new directory
+deleteDirectory(path) - Delete a directory and its contents</code></pre>
+
+                        <h4>Output Functions</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">print(...messages) - Print normal messages
+error(...messages) - Print error messages in red
+success(...messages) - Print success messages in green
+clear() - Clear the output terminal</code></pre>
+
+                        <h4>Utility Functions</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">sleep(ms) - Pause execution for specified milliseconds</code></pre>
+                    </div>
+                </div>
+                <div class="docs-section" id="automations">
+                    <h2>Running Automations</h2>
+                    <p>Follow these steps to create and run automations in LIDE:</p>
+                    <ol class="requirements-list">
+                        <li>Create a file with the .mne extension</li>
+                        <li>Add your automation code using the syntax above</li>
+                        <li>Run the automation using:
+                            <ul>
+                                <li>Click the "Run" button in the automation block</li>
+                                <li>Use the keyboard shortcut Ctrl+R</li>
+                                <li>Click the play button in the file tab</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <h3>Best Practices</h3>
+                    <ul class="requirements-list">
+                        <li>Use descriptive function names</li>
+                        <li>Add error handling with try/catch blocks</li>
+                        <li>Provide user feedback with print functions</li>
+                        <li>Break down complex tasks into smaller functions</li>
+                        <li>Use sleep() to control execution timing</li>
                     </ul>
                 </div>
                 <div class="docs-section" id="contributing">
