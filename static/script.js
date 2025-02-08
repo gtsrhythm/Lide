@@ -974,7 +974,6 @@ function updateSettingButton(id, isEnabled) {
 
 // Add button click handlers
 document.addEventListener('DOMContentLoaded', () => {
-    // ...existing initialization code...
 
     // Add click handlers for setting buttons
     const settingButtons = document.querySelectorAll('.setting-button');
@@ -1430,7 +1429,6 @@ function showPreviewHint() {
 
 // Add this to the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    // ...existing initialization code...
     initializeSettingButtons();
     
     // Improve settings panel animations
@@ -1460,8 +1458,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
-// ...rest of existing code...
 
 // Replace the existing settings handling code with this updated version
 function initializeSettings() {
@@ -1548,7 +1544,6 @@ function handleSettingChange(settingId, isEnabled) {
 
 // Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    // ...existing initialization code...
 
     // Initialize settings
     initializeSettings();
@@ -1609,12 +1604,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Remove any duplicate event listeners for settings
-// (Remove or comment out any other event listeners for settings buttons)
 
-// ...rest of existing code...
-
-// Add this flag near the top with other global variables
 let isInitialLoad = true;
 
 // Replace the settings initialization code
@@ -1753,7 +1743,6 @@ function handleSettingChange(settingId, isEnabled) {
 
 // Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    // ...existing initialization code...
     
     // Initialize settings first
     initializeSettings();
@@ -1781,12 +1770,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-    
-    // ...rest of initialization code...
 });
 
-// Remove any other setting-related event listeners from the rest of the code
-// ...rest of existing code...
 
 // Add at the top with other globals
 const DEBOUNCE_DELAYS = {
@@ -1885,5 +1870,3 @@ window.addEventListener('beforeunload', (e) => {
         return message;
     }
 });
-
-// ...existing code...
