@@ -1,0 +1,33 @@
+`Inline Code`
+
+```javascript
+class ToDoList {
+    constructor() {
+        this.tasks = [];
+    }
+
+    addTask(task) {
+        this.tasks.push(task);
+        console.log(`Added: ${task}`);
+    }
+
+    removeTask(task) {
+        this.tasks = this.tasks.filter(t => t !== task);
+        console.log(`Removed: ${task}`);
+    }
+
+    showTasks() {
+        console.log("To-Do List:");
+        this.tasks.forEach((task, index) => console.log(`${index + 1}. ${task}`));
+    }
+}
+
+// Example usage
+const myList = new ToDoList();
+myList.addTask("Finish homework");
+myList.addTask("Read a book");
+myList.showTasks();
+myList.removeTask("Finish homework");
+myList.showTasks();
+
+```

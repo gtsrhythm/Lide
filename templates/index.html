@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIDE - Minimalist Text Editor</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- Common languages bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/css.min.js"></script>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="side-panel">
+            <div class="app-section">
+                <div class="app-header">
+                    <h2>LIDE</h2>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="showCreateInput('file')">
+                        <span class="material-icons">note_add</span>
+                        <span>New File</span>
+                    </button>
+                    <button class="action-btn" onclick="showCreateInput('folder')">
+                        <span class="material-icons">create_new_folder</span>
+                        <span>New Folder</span>
+                    </button>
+                    <div id="create-input-container" class="create-input-container" style="display: none;">
+                        <div class="input-group">
+                            <input type="text" id="create-input" placeholder="">
+                            <button class="input-cancel-btn" onclick="cancelCreate()">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                        <div class="input-hint"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="workspace-section">
+                <div class="panel-header">
+                    <span class="material-icons">folder</span>
+                    <h3>Workspace</h3>
+                </div>
+                <div class="panel-content" id="workspace-files">
+                    <div id="create-input-container" style="display: none;">
+                        <div class="create-input-wrapper">
+                            <input type="text" id="create-input" placeholder="name.ext or foldername/">
+                        </div>
+                    </div>
+                    <!-- Files will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="editor-wrapper">
+                <textarea id="editor" spellcheck="false" autofocus></textarea>
+                <div class="welcome-screen">
+                    <div class="welcome-content">
+                        <span class="material-icons">description</span>
+                        <h2>Welcome to LIDE</h2>
+                        <p>Please select an existing file or create a new one to get started</p>
+                    </div>
+                </div>
+                <div class="settings-panel">
+                    <div class="settings-header">
+                        <h2>Settings</h2>
+                        <button class="settings-close" id="settings-close" title="Close settings (Esc)">
+                            <span class="material-icons">close</span>
+                            <div class="shortcut-hint">ESC</div>
+                        </button>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-nav">
+                            <button class="settings-nav-item active" data-section="editor">
+                                <span class="material-icons">edit</span>
+                                Editor
+                            </button>
+                            <button class="settings-nav-item" data-section="files">
+                                <span class="material-icons">folder</span>
+                                Files
+                            </button>
+                            <button class="settings-nav-item" data-section="appearance">
+                                <span class="material-icons">palette</span>
+                                Appearance
+                            </button>
+                            <button class="settings-nav-item" data-section="about">
+                                <span class="material-icons">info</span>
+                                About
+                            </button>
+                        </div>
+                        <div class="settings-sections">
+                            <div class="settings-section active" id="editor-section">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Auto Save</label>
+                                        <span class="setting-description">Save changes automatically while typing</span>
+                                    </div>
+                                    <button class="setting-button" id="auto-save" data-state="off">
+                                        <span class="button-label">Off</span>
+                                    </button>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Line Wrapping</label>
+                                        <span class="setting-description">Wrap long lines to fit the editor width</span>
+                                    </div>
+                                    <button class="setting-button" id="line-wrap" data-state="off">
+                                        <span class="button-label">Off</span>
+                                    </button>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Font Size</label>
+                                        <span class="setting-description">Editor font size in pixels</span>
+                                    </div>
+                                    <div class="font-size-control">
+                                        <button class="size-btn" data-action="decrease">-</button>
+                                        <span class="size-display">15px</span>
+                                        <button class="size-btn" data-action="increase">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-section" id="files-section">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>File Extensions</label>
+                                        <span class="setting-description">Show file extensions in the workspace</span>
+                                    </div>
+                                    <button class="setting-button" id="show-extensions" data-state="off">
+                                        <span class="button-label">Off</span>
+                                    </button>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Sort Order</label>
+                                        <span class="setting-description">How files are sorted in the workspace</span>
+                                    </div>
+                                    <select class="setting-select" id="sort-order">
+                                        <option value="type">By Type</option>
+                                        <option value="name">By Name</option>
+                                        <option value="date">By Date</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Auto Backup</label>
+                                        <span class="setting-description">Create backup files automatically</span>
+                                    </div>
+                                    <button class="setting-button" id="auto-backup" data-state="off">
+                                        <span class="button-label">Off</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="settings-section" id="appearance-section">
+                                <div class="theme-grid">
+                                    <label class="theme-option">
+                                        <input type="radio" name="theme" value="dark">
+                                        <div class="theme-card">
+                                            <div class="theme-preview dark">
+                                                <span class="theme-dot"></span>
+                                                <span class="theme-dot"></span>
+                                                <span class="theme-dot"></span>
+                                            </div>
+                                            <div class="theme-label">Dark</div>
+                                        </div>
+                                    </label>
+                                    <label class="theme-option">
+                                        <input type="radio" name="theme" value="darker">
+                                        <div class="theme-card">
+                                            <div class="theme-preview darker">
+                                                <span class="theme-dot"></span>
+                                                <span class="theme-dot"></span>
+                                                <span class="theme-dot"></span>
+                                            </div>
+                                            <div class="theme-label">Darker</div>
+                                        </div>
+                                    </label>
+                                    <label class="theme-option">
+                                        <input type="radio" name="theme" value="light">
+                                        <div class="theme-card">
+                                            <div class="theme-preview light">
+                                                <span class="theme-dot"></span>
+                                                <span class="theme-dot"></span>
+                                                <span class="theme-dot"></span>
+                                            </div>
+                                            <div class="theme-label">Light</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Interface Density</label>
+                                        <span class="setting-description">Adjust the spacing of UI elements</span>
+                                    </div>
+                                    <select class="setting-select" id="ui-density">
+                                        <option value="compact">Compact</option>
+                                        <option value="comfortable">Comfortable</option>
+                                        <option value="spacious">Spacious</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Font Family</label>
+                                        <span class="setting-description">Editor font family</span>
+                                    </div>
+                                    <select class="setting-select" id="font-family">
+                                        <option value="jetbrains">JetBrains Mono</option>
+                                        <option value="fira">Fira Code</option>
+                                        <option value="ubuntu">Ubuntu Mono</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <label>Cursor Style</label>
+                                        <span class="setting-description">Editor cursor appearance</span>
+                                    </div>
+                                    <select class="setting-select" id="cursor-style">
+                                        <option value="line">Line</option>
+                                        <option value="block">Block</option>
+                                        <option value="underscore">Underscore</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="settings-section" id="about-section">
+                                <h3>About LIDE</h3>
+                                <div class="about-content">
+                                    <p>Version 1.0.0</p>
+                                    <p>A lightweight and intuitive text editor</p>
+                                    <div class="about-links">
+                                        <a href="#" class="about-link" onclick="showDocumentationToast(event)">Documentation</a>
+                                        <a href="https://github.com/gtsrhythm" class="about-link" target="_blank">GitHub</a>
+                                        <a href="#" class="about-link">Report Issue</a>
+                                    </div>
+                                    <div class="about-info">
+                                        <p class="info-item">
+                                            <span>Build Date:</span>
+                                            <span>2025-02-01</span>
+                                        </p>
+                                        <p class="info-item">
+                                            <span>License:</span>
+                                            <span>MIT</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-bar" id="tab-bar">
+                <!-- Tabs will be populated by JavaScript -->
+            </div>
+            <div class="control-center">
+                <button class="control-trigger">
+                    <span class="material-icons">tune</span>
+                </button>
+                <div class="control-center-buttons">
+                    <button class="control-btn" id="save-btn" title="Save (Ctrl+S)" disabled>
+                        <span class="material-icons">save</span>
+                    </button>
+                    <button class="control-btn" id="settings-btn" title="Settings">
+                        <span class="material-icons">settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='mne-parser.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        document.getElementById('settings-btn').addEventListener('click', openSettings);
+    </script>
+</body>
+</html>
