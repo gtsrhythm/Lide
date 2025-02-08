@@ -232,73 +232,38 @@ docker run -p 8000:8000 lide</code></pre>
                     <h2>Scripting Guide</h2>
                     <p>Learn how to extend and automate LIDE using its powerful scripting capabilities.</p>
                     
-                    <h3>Automation Features</h3>
-                    <p>LIDE supports custom automation scripts within .mne files using a simplified scripting syntax. Scripts can be created using either code fences or triple colons:</p>
-                    <div class="code-block">
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">// Using code fences:
-```
-// Your automation code here
-```
-
-// Using triple colons:
-:::automation
-// Your automation code here
-:::</code></pre>
-                    </div>
-
-                    <p>Scripts can be used to:</p>
-                    <ul class="requirements-list">
-                        <li>Automate repetitive tasks</li>
-                        <li>Add custom commands</li>
-                        <li>Extend editor functionality</li>
-                        <li>Create custom workflows</li>
-                    </ul>
-
-                    <h3>Basic Syntax</h3>
-                    <div class="code-block">
-                        <h4>Simple Commands</h4>
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">create file.txt
-create src/
-delete file.txt
-print "Hello, World!"</code></pre>
-
-                        <h4>Functions</h4>
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">fn setup() {
-    print "Starting setup..."
-    createFile("config.json")
-}
-
-fn cleanup() {
-    print "Cleaning up..."
-}</code></pre>
-
-                        <h4>Tasks</h4>
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">task "scaffold" {
-    name: "myproject"
-    template: "basic"
-}</code></pre>
-                    </div>
-
                     <h3>Built-in Functions</h3>
                     <div class="code-block">
                         <h4>File Operations</h4>
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">createFile(path, content?) - Create a new file
-deleteFile(path) - Delete a file
-readFile(path) - Read file content
-writeFile(path, content) - Write content to file</code></pre>
-
-                        <h4>Directory Operations</h4>
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">createDirectory(path) - Create a new directory
-deleteDirectory(path) - Delete a directory and its contents</code></pre>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">create(path) - Create a new file or directory
+delete(path) - Delete a file or directory</code></pre>
 
                         <h4>Output Functions</h4>
                         <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">print(...messages) - Print normal messages
 error(...messages) - Print error messages in red
-success(...messages) - Print success messages in green
-clear() - Clear the output terminal</code></pre>
+success(...messages) - Print success messages in green</code></pre>
 
-                        <h4>Utility Functions</h4>
-                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">sleep(ms) - Pause execution for specified milliseconds</code></pre>
+                        <h4>Flow Control</h4>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">sleep(ms) - Pause execution for specified milliseconds
+if (condition) { ... } else { ... } - Conditional execution</code></pre>
+
+                        <h3>Examples</h3>
+                        <pre class="code-block-pre"><button class="copy-button" aria-label="Copy code">Copy</button><code class="language-bash">// Create a new file and directory
+create("config.json")
+create("src/")
+
+// Conditional file operations
+if (exists("old.txt")) {
+    delete("old.txt")
+    success("Old file removed")
+} else {
+    error("File not found")
+}
+
+// Wait and print
+print("Starting process...")
+sleep(1000)  // Wait 1 second
+print("Process complete")</code></pre>
                     </div>
                 </div>
                 <div class="docs-section" id="automations">
