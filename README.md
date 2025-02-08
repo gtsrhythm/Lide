@@ -102,6 +102,137 @@ lide/
     └── .backups/      # Automatic backups
 ```
 
+## Automation Features
+
+LIDE supports custom automation scripts within `.mne` files using a simplified scripting syntax. Scripts can be created using either code fences or triple colons:
+
+```automation
+// Your automation code here
+```
+
+or
+
+:::automation
+// Your automation code here
+:::
+
+### Basic Syntax
+
+1. **Simple Commands**
+   ```automation
+   create file.txt
+   create src/
+   delete file.txt
+   print "Hello, World!"
+   ```
+
+2. **Functions**
+   ```automation
+   fn setup() {
+       print "Starting setup..."
+       createFile("config.json")
+   }
+   
+   fn cleanup() {
+       print "Cleaning up..."
+   }
+   ```
+
+3. **Tasks**
+   ```automation
+   task "scaffold" {
+       name: "myproject"
+       template: "basic"
+   }
+   ```
+
+### Built-in Functions
+
+#### File Operations
+- `createFile(path, content?)` - Create a new file
+- `deleteFile(path)` - Delete a file
+- `readFile(path)` - Read file content
+- `writeFile(path, content)` - Write content to file
+
+#### Directory Operations
+- `createDirectory(path)` - Create a new directory
+- `deleteDirectory(path)` - Delete a directory and its contents
+
+#### Output Functions
+- `print(...messages)` - Print normal messages
+- `error(...messages)` - Print error messages in red
+- `success(...messages)` - Print success messages in green
+- `clear()` - Clear the output terminal
+
+#### Utility Functions
+- `sleep(ms)` - Pause execution for specified milliseconds
+
+### Examples
+
+1. **Project Scaffolding**
+   ```automation
+   fn setup() {
+       createDirectory("src")
+       createDirectory("tests")
+       writeFile("src/main.js", "console.log('Hello!')")
+       success "Project structure created!"
+   }
+   ```
+
+2. **File Processing**
+   ```automation
+   fn processFiles() {
+       const content = readFile("input.txt")
+       writeFile("output.txt", content.toUpperCase())
+       print "File processed successfully"
+   }
+   ```
+
+3. **Using Built-in Tasks**
+   ```automation
+   task "scaffold" {
+       name: "my-app"
+       template: "basic"
+   }
+   
+   task "cleanup" {
+       target: "build/"
+   }
+   ```
+
+4. **Advanced Flow Control**
+   ```automation
+   fn deploy() {
+       try {
+           print "Starting deployment..."
+           for i in 1..3 {
+               print `Step ${i}`
+               await sleep 1000
+           }
+           success "Deployed successfully!"
+       } catch {
+           error "Deployment failed"
+       }
+   }
+   ```
+
+### Running Automations
+
+1. Create a file with the `.mne` extension
+2. Add your automation code using the syntax above
+3. Run the automation using:
+   - Click the "Run" button in the automation block
+   - Use the keyboard shortcut `Ctrl+R`
+   - Click the play button in the file tab
+
+### Best Practices
+
+1. Use descriptive function names
+2. Add error handling with try/catch blocks
+3. Provide user feedback with print functions
+4. Break down complex tasks into smaller functions
+5. Use sleep() to control execution timing
+
 ## Contributing
 
 1. Fork the repository

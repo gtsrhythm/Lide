@@ -37,9 +37,6 @@ instance/
 
 # Project specific
 workspace/*
-!workspace/.gitkeep
-!workspace/Code.mne
-!workspace/Lorem.mne
 *.spec
 *.AppImage
 builds/

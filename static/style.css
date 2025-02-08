@@ -181,6 +181,24 @@ body {
     backface-visibility: hidden;
 }
 
+/* Runnable script indicators */
+.file-item[data-runnable="true"] .file-item-content {
+    color: rgba(91, 158, 255, 0.7);
+}
+
+.file-item[data-runnable="true"]:hover .file-item-content {
+    color: #5b9eff;
+}
+
+/* Remove the play arrow on hover */
+.file-item[data-runnable="true"] .file-item-content::after {
+    display: none;
+}
+
+.file-item[data-runnable="true"] .file-item-actions {
+    padding-right: 24px;
+}
+
 .file-item-content {
     display: flex;
     align-items: center;
@@ -343,6 +361,22 @@ body {
 
 .tab .close-btn:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.tab[data-runnable="true"] {
+    border-color: rgba(91, 158, 255, 0.2);
+}
+
+.tab[data-runnable="true"]::after {
+    content: 'play_arrow';
+    font-family: 'Material Icons';
+    font-size: 14px;
+    opacity: 0.3;
+    margin-left: 4px;
+}
+
+.tab[data-runnable="true"]:hover::after {
+    opacity: 0.5;
 }
 
 .placeholder-tab {
@@ -659,6 +693,19 @@ body {
 
 .directory-item.expanded .material-icons {
     transform: rotate(90deg);
+}
+
+.directory-item .file-item-content .material-icons {
+    transition: transform 0.3s ease;
+}
+
+.directory-item.expanded .file-item-content .material-icons {
+    transform: rotate(90deg);
+}
+
+.file-item-actions .material-icons {
+    transition: none;
+    transform: none !important;
 }
 
 .confirm-dialog {
@@ -1731,3 +1778,247 @@ input:checked:hover + .toggle-track {
     height: 24px;
     margin-bottom: 8px;
 }
+
+/* Automation Blocks */
+.automation-block {
+    margin: 1.5em 0;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--accent-bg);
+}
+
+.automation-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 14px;
+}
+
+.automation-icon {
+    font-size: 18px !important;
+    opacity: 0.7;
+}
+
+.automation-run {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--glass-border);
+    background: var(--panel-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.automation-run:hover:not(:disabled) {
+    background: var(--button-hover);
+    transform: translateY(-1px);
+}
+
+.automation-run:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.automation-run .material-icons {
+    font-size: 16px;
+}
+
+.automation-output {
+    padding: 12px;
+    border-top: 1px solid var(--glass-border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+}
+
+.automation-running {
+    color: #5b9eff;
+}
+
+.automation-success {
+    color: #4caf50;
+}
+
+.automation-error {
+    color: #ff4545;
+}
+
+.automation-terminal {
+    background: var(--bg-color);
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.automation-terminal .output-line {
+    margin: 2px 0;
+    opacity: 0;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+.automation-terminal .output-line.system {
+    color: #7aa2f7;
+}
+
+.automation-terminal .output-line.error {
+    color: #f7768e;
+}
+
+.automation-terminal .output-line.success {
+    color: #9ece6a;
+}
+
+.automation-status {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: var(--panel-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    padding: 12px;
+    max-width: 500px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.automation-status .terminal {
+    white-space: pre-wrap;
+    color: var(--text-color);
+}
+
+.run-automation-btn {
+    background: rgba(45, 118, 255, 0.1) !important;
+    border-color: rgba(45, 118, 255, 0.3) !important;
+    color: #5b9eff !important;
+}
+
+.run-automation-btn:hover {
+    background: rgba(45, 118, 255, 0.15) !important;
+}
+
+.preview-hint {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--accent-bg);
+    border-radius: 6px;
+    font-style: normal;
+}
+
+.preview-hint p {
+    margin: 10px 0;
+    opacity: 0.7;
+}
+
+.preview-hint pre {
+    margin: 10px 0;
+    padding: 12px;
+    background: var(--panel-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+}
+
+/* Enhanced Automation Block Styles */
+.automation-block {
+    margin: 1.5em 0;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--accent-bg);
+    transition: all 0.3s ease;
+}
+
+.automation-block:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.automation-controls {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.automation-help {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.5;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.automation-help:hover {
+    opacity: 1;
+    background: var(--button-hover);
+}
+
+.help-section {
+    padding: 16px;
+    background: var(--panel-bg);
+    border-radius: 4px;
+    margin: 8px 0;
+}
+
+.help-section h4 {
+    margin: 0 0 12px 0;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.help-section pre {
+    background: var(--bg-color);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #7aa2f7;
+}
+
+/* Syntax highlighting for automation code */
+.language-automation {
+    color: var(--text-color) !important;
+}
+
+.language-automation .keyword {
+    color: #bb9af7;
+}
+
+.language-automation .string {
+    color: #9ece6a;
+}
+
+.language-automation .comment {
+    color: #565f89;
+}
+
+.automation-status {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.7;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+/* ...rest of existing styles... */

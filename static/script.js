@@ -117,6 +117,7 @@ function switchToTab(filepath) {
     }
 
     updateTabBar();
+    updateEditorToolbar();
 }
 
 function closeTab(filepath, event) {
@@ -201,7 +202,8 @@ function updateTabBar() {
     } else {
         tabBar.innerHTML = openTabs.map(tab => `
             <div class="tab ${activeTab && activeTab.filepath === tab.filepath ? 'active' : ''}" 
-                 onclick="switchToTab('${tab.filepath}')">
+                 onclick="switchToTab('${tab.filepath}')"
+                 ${tab.filepath.startsWith('script') ? 'data-runnable="true"' : ''}>
                 <span>${tab.filename}</span>
                 <span class="close-btn" onclick="closeTab('${tab.filepath}', event)">×</span>
             </div>
@@ -510,35 +512,37 @@ document.getElementById('create-input').addEventListener('keydown', function(e) 
 });
 
 function loadWorkspaceFiles() {
-    fetch('/workspace-files')
+    return fetch('/workspace-files')
         .then(response => response.json())
         .then(data => {
             const workspaceFiles = document.getElementById('workspace-files');
             
             // Fade out existing content
-            gsap.to(workspaceFiles.children, {
+            return gsap.to(workspaceFiles.children, {
                 opacity: 0,
                 y: -10,
                 duration: 0.2,
                 ease: "power2.in",
-                stagger: 0.02,
-                onComplete: () => {
-                    // Update content
-                    workspaceFiles.innerHTML = renderFileTree(data.files);
-                    
-                    // Animate new items
-                    gsap.from('.file-item, .directory-item', {
-                        opacity: 0,
-                        x: -20,
-                        duration: animations.sidebar.items.duration,
-                        ease: animations.sidebar.items.ease,
-                        stagger: animations.sidebar.items.stagger,
-                        clearProps: "all"
-                    });
-                }
+                stagger: 0.02
+            }).then(() => {
+                // Update content
+                workspaceFiles.innerHTML = renderFileTree(data.files);
+                
+                // Animate new items
+                return gsap.from('.file-item, .directory-item', {
+                    opacity: 0,
+                    x: -20,
+                    duration: 0.3,
+                    ease: "power2.out",
+                    stagger: 0.03,
+                    clearProps: "all"
+                });
             });
         });
 }
+
+// Make loadWorkspaceFiles globally available
+window.loadWorkspaceFiles = loadWorkspaceFiles;
 
 let activeContextItem = null;
 
@@ -582,8 +586,9 @@ function renderFileTree(items) {
                 </div>
             `;
         } else {
+            const isRunnable = item.name.startsWith('script');
             return `
-                <div class="file-item">
+                <div class="file-item" ${isRunnable ? 'data-runnable="true"' : ''}>
                     <div class="file-item-content" onclick="openFile('${item.path}')">
                         <span class="material-icons">description</span>
                         <span>${getDisplayName(item.name, 'file')}</span>
@@ -601,6 +606,37 @@ function renderFileTree(items) {
         }
     }).join('');
     return tree;
+}
+
+function toggleDirectory(element) {
+    const directoryItem = element.closest('.directory-item');
+    const content = directoryItem.querySelector('.directory-content');
+    const icon = element.querySelector('.material-icons');
+    
+    const isExpanded = directoryItem.classList.contains('expanded');
+    
+    if (isExpanded) {
+        gsap.to(content, {
+            height: 0,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.inOut",
+            onComplete: () => {
+                directoryItem.classList.remove('expanded');
+            }
+        });
+    } else {
+        directoryItem.classList.add('expanded');
+        gsap.fromTo(content,
+            { height: 0, opacity: 0 },
+            { 
+                height: "auto",
+                opacity: 1,
+                duration: 0.3,
+                ease: "power2.out"
+            }
+        );
+    }
 }
 
 function hideContextMenus() {
@@ -1869,4 +1905,85 @@ window.addEventListener('beforeunload', (e) => {
         e.returnValue = message;
         return message;
     }
+});
+
+// Add script automation handling
+
+function runAutomation() {
+    if (!activeTab?.filepath.startsWith('script')) {
+        showToast('Automations only work in script files', 'warning');
+        return;
+    }
+
+    // Clean up any previous automation blocks
+    MNEParser.cleanup();
+    
+    const content = document.getElementById('editor').value;
+    
+    try {
+        const automations = MNEParser.runAutomation(content);
+        if (automations.length > 0) {
+            // Run each automation block sequentially
+            automations.reduce((promise, { id }) => {
+                return promise.then(() => MNEParser.executeAutomation(id));
+            }, Promise.resolve())
+            .catch(error => {
+                showToast('Automation failed: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Clean up after all automations are done
+                setTimeout(() => MNEParser.cleanup(), 1000);
+            });
+        }
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+// Add run button to editor when script file is opened
+function updateEditorToolbar() {
+    const toolbar = document.querySelector('.editor-toolbar');
+    if (!toolbar) return;
+
+    if (activeTab?.filepath.startsWith('script')) {
+        if (!document.querySelector('.run-automation-btn')) {
+            const runBtn = document.createElement('button');
+            runBtn.className = 'control-btn run-automation-btn';
+            runBtn.innerHTML = '<span class="material-icons">play_arrow</span>';
+            runBtn.title = 'Run Automations (Ctrl+R)';
+            runBtn.onclick = runAutomation;
+            toolbar.appendChild(runBtn);
+        }
+    } else {
+        const runBtn = document.querySelector('.run-automation-btn');
+        if (runBtn) runBtn.remove();
+    }
+}
+
+// Add automation status display
+document.body.insertAdjacentHTML('beforeend', `
+    <div class="automation-status" style="opacity: 0; transform: translateY(20px)">
+        <div class="terminal"></div>
+    </div>
+`);
+
+// Add keyboard shortcut
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        e.preventDefault();
+        runAutomation();
+    }
+});
+
+// Add tooltip for runnable files
+document.addEventListener('DOMContentLoaded', () => {
+    // ...existing code...
+
+    // Add tooltips for runnable files
+    document.addEventListener('mouseover', e => {
+        const fileItem = e.target.closest('.file-item[data-runnable="true"]');
+        if (fileItem && !fileItem.title) {
+            fileItem.title = 'Click to edit, press Ctrl+R to run';
+        }
+    });
 });
