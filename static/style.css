@@ -15,7 +15,6 @@
     );
 }
 
-/* Theme Variables */
 .theme-dark {
     --bg-color: #1a1a1a;
     --text-color: #d4d4d4;
@@ -47,7 +46,6 @@
     --line-number-color: rgba(0, 0, 0, 0.3);
 }
 
-/* Density Variables */
 .density-compact {
     --spacing-unit: 4px;
     --panel-padding: 12px;
@@ -181,7 +179,6 @@ body {
     backface-visibility: hidden;
 }
 
-/* Runnable script indicators */
 .file-item[data-runnable="true"] .file-item-content {
     color: rgba(91, 158, 255, 0.7);
 }
@@ -190,7 +187,6 @@ body {
     color: #5b9eff;
 }
 
-/* Remove the play arrow on hover */
 .file-item[data-runnable="true"] .file-item-content::after {
     display: none;
 }
@@ -316,15 +312,12 @@ body {
     scrollbar-width: none;
 }
 
-.tab-bar::-webkit-scrollbar {
-    display: none;
-}
-
 .tab {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 12px;
+    min-width: 120px; 
+    max-width: 200px; 
     height: 28px;
     background: var(--accent-bg);
     border: 1px solid var(--glass-border);
@@ -336,47 +329,44 @@ body {
     white-space: nowrap;
     transition: all 0.2s ease;
     will-change: transform;
+    padding: 0 8px;
+    justify-content: space-between; 
+    opacity: 0.7; 
+}
+
+.tab span:first-child {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 4px;
 }
 
 .tab.active {
     background: var(--button-hover);
     border-color: var(--accent-color);
+    opacity: 1; 
+    transform: translateY(-1px); 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
 }
 
+.tab:hover {
+    opacity: 0.9;
+    border-color: var(--accent-color);
+}
+
+.tab .run-btn,
 .tab .close-btn {
+    padding: 2px;
     width: 16px;
     height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 3px;
     font-size: 14px;
     opacity: 0.5;
     transition: all 0.2s ease;
-}
-
-.tab:hover .close-btn {
-    opacity: 1;
-}
-
-.tab .close-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.tab[data-runnable="true"] {
-    border-color: rgba(91, 158, 255, 0.2);
-}
-
-.tab[data-runnable="true"]::after {
-    content: 'play_arrow';
-    font-family: 'Material Icons';
-    font-size: 14px;
-    opacity: 0.3;
-    margin-left: 4px;
-}
-
-.tab[data-runnable="true"]:hover::after {
-    opacity: 0.5;
+    flex-shrink: 0; 
 }
 
 .placeholder-tab {
@@ -414,7 +404,7 @@ body {
     scrollbar-width: thin;
     scrollbar-color: var(--button-hover) transparent;
     font-family: 'JetBrains Mono', monospace;
-    white-space: pre; /* Default to no wrapping */
+    white-space: pre; 
     position: relative;
     counter-reset: line;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -453,7 +443,6 @@ body {
     outline: none;
 }
 
-/* Remove old line numbers styles */
 #editor::before,
 #editor::after,
 .line-numbers {
@@ -468,7 +457,7 @@ body {
     flex-direction: column;
     gap: 8px;
     align-items: flex-end;
-    z-index: 9999;  /* Add this line to ensure it stays on top */
+    z-index: 9999;  
 }
 
 .control-trigger {
@@ -533,29 +522,24 @@ body {
     pointer-events: none;
 }
 
-/* Remove save indicator styles */
 .save-indicator {
     display: none;
 }
 
-/* Remove old floating buttons styles */
 .floating-buttons,
 .floating-button {
     display: none;
 }
 
-/* Custom selection color */
 ::selection {
     background: var(--accent-color);
     color: var(--text-color);
 }
 
-/* Remove old toolbar styles */
 .toolbar {
     display: none;
 }
 
-/* Remove old floating-save styles */
 .floating-save {
     display: none;
 }
@@ -612,7 +596,6 @@ body {
     border-color: var(--accent-color);
 }
 
-/* Remove the old action-buttons styles */
 .action-buttons {
     display: flex;
     flex-direction: column;
@@ -818,7 +801,6 @@ body {
     font-size: 18px;
 }
 
-/* Remove old context menu styles */
 .context-menu,
 .context-menu-item {
     display: none;
@@ -1164,7 +1146,6 @@ body {
     text-align: right;
 }
 
-/* Light theme adjustments for tables */
 .theme-light .mne-preview th {
     background: rgba(0, 0, 0, 0.02);
 }
@@ -1173,7 +1154,6 @@ body {
     background: rgba(0, 0, 0, 0.01);
 }
 
-/* Light theme adjustments */
 .theme-light .mne-preview code {
     background: rgba(122, 162, 247, 0.1);
     color: #2b5cc9;
@@ -1293,7 +1273,6 @@ body {
     will-change: transform;
 }
 
-/* Remove old toggle styles */
 .toggle,
 .toggle-track,
 .toggle-indicator {
@@ -1326,7 +1305,6 @@ body {
     background: rgba(45, 118, 255, 0.15);
 }
 
-/* Toggle states */
 input:checked + .toggle-track {
     background: rgba(45, 118, 255, 0.1);
     border-color: rgba(45, 118, 255, 0.3);
@@ -1534,7 +1512,6 @@ input:checked:hover + .toggle-track {
     opacity: 0.5;
 }
 
-/* Cursor Styles */
 .cursor-line #editor {
     caret-width: 2px;
     caret-color: var(--text-color);
@@ -1550,7 +1527,6 @@ input:checked:hover + .toggle-track {
     caret-color: var(--text-color);
 }
 
-/* Font Families */
 .font-jetbrains #editor {
     font-family: 'JetBrains Mono', monospace;
 }
@@ -1563,7 +1539,6 @@ input:checked:hover + .toggle-track {
     font-family: 'Ubuntu Mono', monospace;
 }
 
-/* Theme-specific overrides */
 .theme-light .panel-header {
     background: rgba(245, 245, 245, 0.95);
 }
@@ -1631,7 +1606,6 @@ input:checked:hover + .toggle-track {
     color: var(--text-color);
 }
 
-/* Fix line numbers styling for code blocks */
 .mne-preview pre[class*="language-"].line-numbers {
     position: relative;
     padding-left: 3.8em;
@@ -1669,7 +1643,6 @@ input:checked:hover + .toggle-track {
     text-align: right;
 }
 
-/* Enhance code block styling */
 .mne-preview pre[class*="language-"] {
     margin: 1.5em 0;
     padding: 1em;
@@ -1685,7 +1658,6 @@ input:checked:hover + .toggle-track {
     text-shadow: none;
 }
 
-/* Code block styling */
 .mne-preview pre {
     margin: 1.5em 0;
     padding: 1em;
@@ -1705,7 +1677,6 @@ input:checked:hover + .toggle-track {
     line-height: 1.5;
 }
 
-/* Add line numbers */
 .mne-preview pre {
     counter-reset: line;
 }
@@ -1727,13 +1698,11 @@ input:checked:hover + .toggle-track {
     user-select: none;
 }
 
-/* Remove old Prism.js styles */
 .line-numbers-rows,
 .line-numbers {
     display: none;
 }
 
-/* Add loading state styles */
 .loading {
     position: relative;
     overflow: hidden;
@@ -1756,7 +1725,6 @@ input:checked:hover + .toggle-track {
     to { transform: translateX(100%); }
 }
 
-/* Add loading placeholder animation */
 @keyframes placeholderShimmer {
     0% {
         background-position: -500px 0;
@@ -1779,7 +1747,6 @@ input:checked:hover + .toggle-track {
     margin-bottom: 8px;
 }
 
-/* Automation Blocks */
 .automation-block {
     margin: 1.5em 0;
     border: 1px solid var(--glass-border);
@@ -1938,7 +1905,6 @@ input:checked:hover + .toggle-track {
     font-size: 13px;
 }
 
-/* Enhanced Automation Block Styles */
 .automation-block {
     margin: 1.5em 0;
     border: 1px solid var(--glass-border);
@@ -1996,7 +1962,6 @@ input:checked:hover + .toggle-track {
     color: #7aa2f7;
 }
 
-/* Syntax highlighting for automation code */
 .language-automation {
     color: var(--text-color) !important;
 }
@@ -2020,5 +1985,3 @@ input:checked:hover + .toggle-track {
     opacity: 0.7;
     border-bottom: 1px solid var(--glass-border);
 }
-
-/* ...rest of existing styles... */

@@ -18,6 +18,7 @@ A minimalist, browser-based text editor with modern features and a clean interfa
 - 🔤 Multiple font families
 - 📏 Line wrapping
 - 🎯 Different cursor styles
+- 🤖 Built-in automation support
 
 ## Requirements
 
@@ -104,134 +105,99 @@ lide/
 
 ## Automation Features
 
-LIDE supports custom automation scripts within `.mne` files using a simplified scripting syntax. Scripts can be created using either code fences or triple colons:
+LIDE supports a powerful automation system through `.mne` files using an intuitive scripting syntax:
+
+### Basic Usage
+
+Create automations using code fences or triple colons:
 
 ```automation
-// Your automation code here
+// Simple command example
+create src/
+create src/index.js
+print "Project initialized!"
 ```
 
 or
 
 :::automation
-// Your automation code here
+// Task example
+task "scaffold" {
+    name: "myproject"
+    template: "web"
+}
 :::
 
-### Basic Syntax
+### Key Features
 
 1. **Simple Commands**
-   ```automation
-   create file.txt
-   create src/
-   delete file.txt
-   print "Hello, World!"
-   ```
+   - File operations: `create`, `delete`
+   - Output: `print`, `success`, `error`
+   - Flow control: `sleep`, `if/else`
 
-2. **Functions**
-   ```automation
-   fn setup() {
-       print "Starting setup..."
-       createFile("config.json")
-   }
-   
-   fn cleanup() {
-       print "Cleaning up..."
-   }
-   ```
+2. **Task System**
+   - Predefined task templates
+   - Custom task definitions
+   - Async/await support
 
-3. **Tasks**
-   ```automation
-   task "scaffold" {
-       name: "myproject"
-       template: "basic"
-   }
-   ```
+3. **Error Handling**
+   - Try/catch blocks
+   - Error reporting
+   - Status feedback
 
-### Built-in Functions
+### Example Scripts
 
-#### File Operations
-- `createFile(path, content?)` - Create a new file
-- `deleteFile(path)` - Delete a file
-- `readFile(path)` - Read file content
-- `writeFile(path, content)` - Write content to file
-
-#### Directory Operations
-- `createDirectory(path)` - Create a new directory
-- `deleteDirectory(path)` - Delete a directory and its contents
-
-#### Output Functions
-- `print(...messages)` - Print normal messages
-- `error(...messages)` - Print error messages in red
-- `success(...messages)` - Print success messages in green
-- `clear()` - Clear the output terminal
-
-#### Utility Functions
-- `sleep(ms)` - Pause execution for specified milliseconds
-
-### Examples
-
-1. **Project Scaffolding**
-   ```automation
-   fn setup() {
-       createDirectory("src")
-       createDirectory("tests")
-       writeFile("src/main.js", "console.log('Hello!')")
-       success "Project structure created!"
-   }
-   ```
+1. **Project Setup**
+```automation
+fn setup() {
+    print "Initializing project..."
+    
+    // Create structure
+    create "src/"
+    create "tests/"
+    create "docs/"
+    
+    // Add base files
+    writeFile("src/index.js", "console.log('Hello World');")
+    writeFile("README.md", "# My Project\n\nAn awesome project.")
+    
+    success "Project ready!"
+}
+```
 
 2. **File Processing**
-   ```automation
-   fn processFiles() {
-       const content = readFile("input.txt")
-       writeFile("output.txt", content.toUpperCase())
-       print "File processed successfully"
-   }
-   ```
+```automation
+task "process-files" {
+    source: "data/"
+    pattern: "*.txt"
+    operation: "uppercase"
+}
+```
 
-3. **Using Built-in Tasks**
-   ```automation
-   task "scaffold" {
-       name: "my-app"
-       template: "basic"
-   }
-   
-   task "cleanup" {
-       target: "build/"
-   }
-   ```
+### Built-in Tasks
 
-4. **Advanced Flow Control**
-   ```automation
-   fn deploy() {
-       try {
-           print "Starting deployment..."
-           for i in 1..3 {
-               print `Step ${i}`
-               await sleep 1000
-           }
-           success "Deployed successfully!"
-       } catch {
-           error "Deployment failed"
-       }
-   }
-   ```
-
-### Running Automations
-
-1. Create a file with the `.mne` extension
-2. Add your automation code using the syntax above
-3. Run the automation using:
-   - Click the "Run" button in the automation block
-   - Use the keyboard shortcut `Ctrl+R`
-   - Click the play button in the file tab
+| Task Name | Description | Parameters |
+|-----------|-------------|------------|
+| scaffold | Create project structure | name, template |
+| cleanup | Remove temp files | target |
+| deploy | Deploy files | dest, mode |
 
 ### Best Practices
 
-1. Use descriptive function names
-2. Add error handling with try/catch blocks
-3. Provide user feedback with print functions
-4. Break down complex tasks into smaller functions
-5. Use sleep() to control execution timing
+1. **Organization**
+   - Group related operations
+   - Use descriptive names
+   - Add comments for complex logic
+
+2. **Error Handling**
+   - Always include try/catch
+   - Provide user feedback
+   - Clean up on failure
+
+3. **Performance**
+   - Batch file operations
+   - Use async when possible
+   - Minimize sleep usage
 
 ## Contributing
 

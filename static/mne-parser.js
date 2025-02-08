@@ -1,5 +1,5 @@
 class MNEParser {
-    // Define AutomationSystem class first, at the top of MNEParser
+
     static AutomationSystem = class {
         constructor(functions) {
             this.taskLibrary = new Map();
@@ -44,11 +44,11 @@ class MNEParser {
             });
             hljs.highlightAll();
         }
-        // Initialize automation functions first
+
         this.initializeAutomation();
-        // Then create the automation system
+
         this.automation = new this.AutomationSystem(this.automationFunctions);
-        // Register built-in tasks
+
         this.registerBuiltInTasks();
         this.terminalOutputs = new Map();
     }
@@ -102,19 +102,19 @@ class MNEParser {
                 this.appendToTerminal(this.currentAutomationId, output);
                 return true;
             },
-            
+
             printError: (...args) => {
                 const output = args.join(' ');
                 this.appendToTerminal(this.currentAutomationId, output, 'error');
                 return true;
             },
-            
+
             printSuccess: (...args) => {
                 const output = args.join(' ');
                 this.appendToTerminal(this.currentAutomationId, output, 'success');
                 return true;
             },
-            
+
             clear: () => {
                 this.clearTerminal(this.currentAutomationId);
                 return true;
@@ -125,11 +125,9 @@ class MNEParser {
 
     static parse(text) {
         let html = text;
-        
-        // Handle automation blocks first to avoid syntax conflicts
+
         html = this.parseAutomationBlocks(html);
-        
-        // Continue with regular parsing
+
         const codeBlocks = new Map();
         html = this.preserveCodeBlocks(html, codeBlocks);
 
@@ -148,7 +146,7 @@ class MNEParser {
             if (block.includes('\n')) {
                 return block.split('\n').map(line => this.processBlock(line)).join('\n');
             }
-            
+
             return this.processBlock(block);
         }).join('\n\n');
 
@@ -160,15 +158,15 @@ class MNEParser {
 
     static parseAutomationBlocks(text) {
         const pattern = /```automation\s*\n([\s\S]*?)\n```|:::automation\s*\n([\s\S]*?)\n:::/g;
-        
+
         return text.replace(pattern, (match, code1, code2) => {
             const code = (code1 || code2).trim();
             const id = `automation-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-            
+
             try {
-                // Parse simplified syntax
+
                 const jsCode = MNEParser.convertToJavaScript(code);
-                
+
                 const executionBlock = `
                     <div class="automation-block" id="${id}">
                         <div class="automation-header">
@@ -210,20 +208,17 @@ class MNEParser {
     }
 
     static convertToJavaScript(code) {
-        // Remove comments
+
         code = code.replace(/\/\/.*$/gm, '');
-        
-        // Parse task definitions
+
         if (code.includes('task')) {
             return MNEParser.parseTaskDefinition(code);
         }
-        
-        // Parse simple commands
+
         if (!code.includes('function') && !code.includes('=>')) {
             return MNEParser.parseSimpleCommands(code);
         }
-        
-        // Parse advanced code
+
         return MNEParser.parseAdvancedCode(code);
     }
 
@@ -231,13 +226,13 @@ class MNEParser {
         const taskPattern = /task\s+(['"])(.*?)\1\s*{([\s\S]*?)}/g;
         let jsCode = 'async function run() {\n';
         let match;
-        
+
         while ((match = taskPattern.exec(code)) !== null) {
             const [_, quote, name, body] = match;
             const args = this.parseTaskArgs(body);
             jsCode += `  await MNEParser.automation.runTask('${name}', ${args});\n`;
         }
-        
+
         return jsCode + '};\nrun();';
     }
 
@@ -247,8 +242,7 @@ class MNEParser {
         for (const line of lines) {
             const trimmed = line.trim();
             if (!trimmed || trimmed.startsWith('//')) continue;
-            
-            // Simple key-value pattern
+
             const match = trimmed.match(/(\w+):\s*(.+)/);
             if (match) {
                 const [_, key, value] = match;
@@ -262,7 +256,7 @@ class MNEParser {
         const lines = code.split('\n').filter(line => line.trim());
         let jsCode = 'async function run() {\n';
         jsCode += '  const { files, folders, output } = MNEParser.automation.utilities;\n';
-        
+
         for (const line of lines) {
             const command = line.trim();
             if (command.startsWith('create')) {
@@ -276,37 +270,31 @@ class MNEParser {
                 jsCode += `  output.print(${msg});\n`;
             }
         }
-        
+
         return jsCode + '};\nrun();';
     }
 
     static parseAdvancedCode(code) {
         try {
             let jsCode = code
-                // Modern functions (both styles)
+
                 .replace(/fn\s+(\w+)\s*\((.*?)\)/g, 'async function $1($2)')
                 .replace(/fn\s*\((.*?)\)\s*=>/g, 'async ($1) =>')
-                
-                // Simple string interpolation - fix the regex to avoid lookbehind
+
                 .replace(/("[^"]*)\{([^}]+)\}([^"]*")/g, '`$1${$2}$3')
-                
-                // Async sleep syntax
+
                 .replace(/await\s+sleep\s+(\d+)/g, 'await sleep($1)')
-                
-                // Modern loop syntax
+
                 .replace(/for\s+(\w+)\s+in\s+(\d+)\.\.(\d+)/g, 'for(let $1 = $2; $1 <= $3; $1++)')
                 .replace(/for\s+(\w+)\s+in\s+(\w+)/g, 'for(const $1 of $2)')
-                
-                // Control structures
+
                 .replace(/if\s+([^{]+?)\s*\{/g, 'if ($1) {')
                 .replace(/\}\s*else\s*\{/g, '} else {')
                 .replace(/\}\s*elif\s+([^{]+?)\s*\{/g, '} else if ($1) {')
-                
-                // Error handling
+
                 .replace(/try\s*\{/g, 'try {')
                 .replace(/\}\s*catch\s*\{/g, '} catch (error) {')
-                
-                // Keywords and symbols
+
                 .replace(/\blet\b/g, 'let')
                 .replace(/\bconst\b/g, 'const')
                 .replace(/\bnil\b/g, 'null')
@@ -315,11 +303,9 @@ class MNEParser {
                 .replace(/\berror\b/g, 'printError')
                 .replace(/\bsuccess\b/g, 'printSuccess')
                 .replace(/\bclear\b/g, 'clear')
-                
-                // End block replacements
+
                 .replace(/\bend\b/g, '}');
 
-            // Validate the resulting code
             Function(`"use strict";{${jsCode}}`);
 
             return `
@@ -343,23 +329,22 @@ class MNEParser {
     static async executeAutomation(id) {
         const block = document.getElementById(id);
         if (!block || !this.automationCode?.has(id)) return;
-        
+
         const output = block.querySelector('.automation-output');
         const terminal = block.querySelector('.automation-terminal');
-        
+
         try {
             output.style.display = 'block';
             this.currentAutomationId = id;
             this.clearTerminal(id);
-            
+
             this.appendToTerminal(id, '> Starting automation...\n');
-            
+
             const code = this.automationCode.get(id);
             await eval(code);
-            
+
             this.appendToTerminal(id, '\n> Automation completed successfully', 'success');
-            
-            // Refresh workspace
+
             this.appendToTerminal(id, '\n> Refreshing workspace...', 'system');
             try {
                 await new Promise(resolve => setTimeout(resolve, 100));
@@ -435,7 +420,7 @@ class MNEParser {
 
     static processTable(block) {
         const rows = block.trim().split('\n');
-        
+
         if (rows.length < 2) return block;
 
         const headerCells = this.parseTableRow(rows[0]);
@@ -484,12 +469,12 @@ class MNEParser {
         return text.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
             const id = `CODE_BLOCK_${codeBlocks.size}`;
             const validLang = this.getValidLanguage(lang);
-            
+
             codeBlocks.set(id, {
                 code: code.trim(),
                 language: validLang
             });
-            
+
             return id;
         });
     }
@@ -514,14 +499,14 @@ class MNEParser {
         let result = text;
         for (const [id, data] of codeBlocks) {
             const { code, language } = data;
-            
+
             const html = `
                 <pre><code class="${language ? `language-${language}` : ''}">${this.escapeHtml(code)}</code></pre>
             `.trim();
-            
+
             result = result.replace(id, html);
         }
-        
+
         if (typeof hljs !== 'undefined') {
             setTimeout(() => {
                 document.querySelectorAll('pre code').forEach(block => {
@@ -529,7 +514,7 @@ class MNEParser {
                 });
             }, 0);
         }
-        
+
         return result;
     }
 
@@ -564,22 +549,11 @@ class MNEParser {
             return `<div class="mne-preview-empty">
                 <em>Start typing to see the preview...</em>
                 <div class="preview-hint">
-                    <p>Create an automation block using:</p>
-                    <pre>:::automation
-fn setup() {
-    print "Hello, automation!"
-}
-:::</pre>
-                    <p>or with code fences:</p>
-                    <pre>\`\`\`automation
-fn setup() {
-    print "Hello, automation!"
-}
-\`\`\`</pre>
+                    <p>This file supports Markdown formatting and automation scripts.</p>
                 </div>
             </div>`;
         }
-        // Use the same updated pattern for preview
+
         text = text.replace(/(?:```automation\n|\:{3}automation\n)([\s\S]*?)(?:\n```$|\n\:{3}$)/gm, '');
         return this.parse(text);
     }
@@ -590,17 +564,17 @@ fn setup() {
             'Create a basic project structure',
             async (projectName, template = 'basic') => {
                 const { folders, files, output } = this.automation.utilities;
-                
+
                 output.print(`Creating ${template} project: ${projectName}`);
-                
+
                 await folders.create(projectName);
-                
+
                 if (template === 'basic') {
                     await files.create(`${projectName}/README.md`, '# ' + projectName);
                     await files.create(`${projectName}/src/main.js`, '// Main entry point');
                     await files.create(`${projectName}/src/styles.css`, '/* Styles */');
                 }
-                
+
                 output.success('Project created successfully!');
             }
         );
@@ -609,23 +583,21 @@ fn setup() {
     static runAutomation(content) {
         const pattern = /```automation\n([\s\S]*?)\n```|:::automation\n([\s\S]*?)\n:::/g;
         const matches = content.match(pattern);
-        
+
         if (!matches) {
             throw new Error('No automations found in file');
         }
-        
-        // Create a temporary container for automation blocks
+
         const container = document.createElement('div');
         container.id = 'temp-automation-container';
         container.style.display = 'none';
         document.body.appendChild(container);
-        
+
         const automations = matches.map(block => {
             const codeMatch = block.match(/(?:```automation\n|:::automation\n)([\s\S]*?)(?:\n```|\n:::)/);
             const code = codeMatch[1].trim();
             const id = `automation-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-            
-            // Create the automation block in DOM
+
             container.innerHTML += `
                 <div class="automation-block" id="${id}">
                     <div class="automation-output">
@@ -634,14 +606,13 @@ fn setup() {
                     </div>
                 </div>
             `;
-            
-            // Store the code for execution
+
             if (!this.automationCode) this.automationCode = new Map();
             this.automationCode.set(id, this.convertToJavaScript(code));
-            
+
             return { id, code };
         });
-        
+
         return automations;
     }
 
@@ -657,28 +628,26 @@ fn setup() {
         const block = document.getElementById(id);
         const output = block.querySelector('.automation-output');
         const terminal = block.querySelector('.automation-terminal');
-        
+
         output.style.display = 'block';
         terminal.innerHTML = `
             <div class="help-section">
                 <h4>Quick Reference</h4>
                 <pre>
-// Simple commands:
+
 create file.txt
 create src/
 delete file.txt
 print "Message"
 
-// Task usage:
 task "scaffold" {
     name: "myproject"
     template: "basic"
 }
 
-// Advanced usage:
 fn setup() {
     const { files, output } = automation.utilities;
-    // Your code here
+
 }
 </pre>
             </div>
@@ -686,6 +655,5 @@ fn setup() {
     }
 }
 
-// Initialize at the end
 window.MNEParser = MNEParser;
 MNEParser.initialize();

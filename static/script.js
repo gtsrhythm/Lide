@@ -1,4 +1,3 @@
-// Animation configurations
 const animations = {
     slideIn: { duration: 0.4, ease: "power3.out" },
     fadeIn: { duration: 0.3, ease: "power2.out" },
@@ -16,7 +15,6 @@ const animations = {
 
 let mainTimeline = gsap.timeline();
 
-// Line numbers functionality
 function updateLineNumbers() {
     const editor = document.getElementById('editor');
     const lines = editor.value.split('\n');
@@ -29,14 +27,13 @@ document.getElementById('editor').addEventListener('scroll', function() {
     document.querySelector('.line-numbers').scrollTop = this.scrollTop;
 });
 
-// Initialize line numbers
 updateLineNumbers();
 
 let openTabs = [];
 let activeTab = null;
 
 function openFile(filepath) {
-    // Check if file is already open
+
     if (openTabs.find(tab => tab.filepath === filepath)) {
         switchToTab(filepath);
         return;
@@ -68,8 +65,7 @@ function switchToTab(filepath) {
     const tl = gsap.timeline();
     const editor = document.getElementById('editor');
     const preview = document.querySelector('.mne-preview');
-    
-    // Save preview state if current tab has preview
+
     if (prevTab?.filepath.endsWith('.mne')) {
         isPreviewMode = false;
     }
@@ -84,8 +80,7 @@ function switchToTab(filepath) {
             onComplete: () => {
                 editor.value = tab.content;
                 updateLineNumbers();
-                
-                // Handle preview for new tab
+
                 if (tab.filepath.endsWith('.mne')) {
                     if (preview) preview.style.display = 'block';
                     updatePreview();
@@ -103,8 +98,7 @@ function switchToTab(filepath) {
     } else {
         editor.value = tab.content;
         updateLineNumbers();
-        
-        // Handle preview for new tab
+
         if (tab.filepath.endsWith('.mne')) {
             if (preview) {
                 preview.style.display = 'block';
@@ -126,8 +120,7 @@ function closeTab(filepath, event) {
     if (index !== -1) {
         const closingTab = openTabs[index];
         openTabs.splice(index, 1);
-        
-        // Clean up preview if closing an MNE file
+
         if (closingTab.filepath.endsWith('.mne')) {
             const preview = document.querySelector('.mne-preview');
             if (preview) {
@@ -138,7 +131,7 @@ function closeTab(filepath, event) {
                     ease: animations.slideIn.ease,
                     onComplete: () => {
                         preview.style.display = 'none';
-                        preview.remove(); // Remove the preview element entirely
+                        preview.remove(); 
                     }
                 });
             }
@@ -148,12 +141,11 @@ function closeTab(filepath, event) {
         if (activeTab && activeTab.filepath === filepath) {
             const nextTab = openTabs[Math.min(index, openTabs.length - 1)];
             activeTab = nextTab || null;
-            
+
             if (activeTab) {
                 document.getElementById('editor').value = activeTab.content;
                 updateLineNumbers();
-                
-                // Setup preview for next tab if it's an MNE file
+
                 if (activeTab.filepath.endsWith('.mne')) {
                     setTimeout(showPreviewHint, 1000);
                 }
@@ -161,7 +153,7 @@ function closeTab(filepath, event) {
                 document.getElementById('editor').value = '';
             }
         }
-        
+
         updateTabBar();
     }
 }
@@ -182,17 +174,16 @@ function updateTabBar() {
     const tabBar = document.getElementById('tab-bar');
     const welcomeScreen = document.querySelector('.welcome-screen');
     const saveButton = document.getElementById('save-btn');
-    
+
     if (openTabs.length === 0) {
-        tabBar.innerHTML = ''; // Remove the placeholder tab
+        tabBar.innerHTML = ''; 
         document.getElementById('editor').value = '';
         document.getElementById('editor').disabled = true;
         welcomeScreen.classList.remove('hidden');
         if (saveButton) {
             saveButton.disabled = true;
         }
-        
-        // Animate placeholder tab
+
         gsap.from(".placeholder-tab", {
             y: -20,
             opacity: 0,
@@ -200,21 +191,27 @@ function updateTabBar() {
             ease: "back.out(1.4)"
         });
     } else {
-        tabBar.innerHTML = openTabs.map(tab => `
-            <div class="tab ${activeTab && activeTab.filepath === tab.filepath ? 'active' : ''}" 
-                 onclick="switchToTab('${tab.filepath}')"
-                 ${tab.filepath.startsWith('script') ? 'data-runnable="true"' : ''}>
-                <span>${tab.filename}</span>
-                <span class="close-btn" onclick="closeTab('${tab.filepath}', event)">×</span>
-            </div>
-        `).join('');
+        tabBar.innerHTML = openTabs.map(tab => {
+            const isRunnable = tab.filepath.startsWith('script');
+            return `
+                <div class="tab ${activeTab && activeTab.filepath === tab.filepath ? 'active' : ''}" 
+                     onclick="switchToTab('${tab.filepath}')">
+                    <span>${tab.filename}</span>
+                    ${isRunnable ? `
+                        <span class="run-btn" onclick="event.stopPropagation(); runAutomation(event);" title="Run (Ctrl+R)">
+                            <span class="material-icons">play_arrow</span>
+                        </span>
+                    ` : ''}
+                    <span class="close-btn" onclick="event.stopPropagation(); closeTab('${tab.filepath}', event)">×</span>
+                </div>
+            `;
+        }).join('');
         document.getElementById('editor').disabled = false;
         welcomeScreen.classList.add('hidden');
         if (saveButton) {
             saveButton.disabled = false;
         }
 
-        // Animate new tabs
         gsap.from(".tab:not(.animated)", {
             scale: 0.8,
             opacity: 0,
@@ -227,7 +224,6 @@ function updateTabBar() {
         });
     }
 
-    // Replace the preview button check with just the hint
     if (activeTab && activeTab.filepath.endsWith('.mne')) {
         showPreviewHint();
     } else if (isPreviewMode) {
@@ -240,10 +236,10 @@ function saveContent() {
 
     const content = document.getElementById('editor').value;
     activeTab.content = content;
-    
+
     const saveButton = document.getElementById('save-btn');
-    if (!saveButton) return; // Guard against null button
-    
+    if (!saveButton) return; 
+
     gsap.to(saveButton, {
         backgroundColor: 'rgba(46, 125, 50, 0.2)',
         borderColor: 'rgba(46, 125, 50, 0.3)',
@@ -257,7 +253,7 @@ function saveContent() {
             saveButton.style.removeProperty('border-color');
         }
     });
-    
+
     fetch('/save', {
         method: 'POST',
         headers: {
@@ -284,17 +280,16 @@ function saveContent() {
 
 function openSettings() {
     const panel = document.querySelector('.settings-panel');
-    const settingsBtn = document.getElementById('settings-btn'); // Updated selector
-    
+    const settingsBtn = document.getElementById('settings-btn'); 
+
     panel.classList.add('open');
     settingsBtn.disabled = true;
-    
-    // Reset to first section
+
     document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
     document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
     document.querySelector('.settings-nav-item[data-section="editor"]').classList.add('active');
     document.getElementById('editor-section').classList.add('active');
-    
+
     gsap.fromTo(panel,
         { opacity: 0, y: 20 },
         { 
@@ -309,8 +304,8 @@ function openSettings() {
 
 function closeSettings() {
     const panel = document.querySelector('.settings-panel');
-    const settingsBtn = document.getElementById('settings-btn'); // Updated selector
-    
+    const settingsBtn = document.getElementById('settings-btn'); 
+
     gsap.to(panel, {
         opacity: 0,
         y: 20,
@@ -324,7 +319,6 @@ function closeSettings() {
     });
 }
 
-// Add tab support
 document.getElementById('editor').addEventListener('keydown', function(e) {
     if (e.key === 'Tab') {
         e.preventDefault();
@@ -342,7 +336,7 @@ function showCreateInput(mode) {
     const container = document.getElementById('create-input-container');
     const input = document.getElementById('create-input');
     const hint = container.querySelector('.input-hint');
-    
+
     container.style.display = 'block';
     input.value = '';
     input.placeholder = mode === 'file' ? 'filename.ext' : 'folder-name';
@@ -351,7 +345,6 @@ function showCreateInput(mode) {
         'Press Enter to create folder, Esc to cancel';
     input.focus();
 
-    // Animate container appearance
     gsap.fromTo(container, 
         { height: 0, opacity: 0 },
         { 
@@ -366,7 +359,7 @@ function showCreateInput(mode) {
 
 function cancelCreate() {
     const container = document.getElementById('create-input-container');
-    
+
     gsap.to(container, {
         height: 0,
         opacity: 0,
@@ -387,7 +380,7 @@ function showConfirmDialog(options) {
         dialog.className = 'confirm-dialog';
         document.body.appendChild(dialog);
     }
-    
+
     const buttons = options.buttons.map(btn => `
         <button class="confirm-btn ${btn.type || ''}" id="${btn.id}">
             ${btn.text}
@@ -425,7 +418,6 @@ function showConfirmDialog(options) {
         }
     );
 
-    // Setup button handlers
     options.buttons.forEach(btn => {
         const buttonEl = dialog.querySelector(`#${btn.id}`);
         buttonEl.onclick = () => {
@@ -434,7 +426,6 @@ function showConfirmDialog(options) {
         };
     });
 
-    // Focus input if present
     if (options.input) {
         const input = dialog.querySelector(`#${options.input.id}`);
         input.focus();
@@ -498,7 +489,6 @@ function createFileOrFolder(value, mode, force = false) {
     });
 }
 
-// Replace the existing keydown event listener with this updated version
 document.getElementById('create-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
         const value = this.value.trim();
@@ -516,8 +506,7 @@ function loadWorkspaceFiles() {
         .then(response => response.json())
         .then(data => {
             const workspaceFiles = document.getElementById('workspace-files');
-            
-            // Fade out existing content
+
             return gsap.to(workspaceFiles.children, {
                 opacity: 0,
                 y: -10,
@@ -525,10 +514,9 @@ function loadWorkspaceFiles() {
                 ease: "power2.in",
                 stagger: 0.02
             }).then(() => {
-                // Update content
+
                 workspaceFiles.innerHTML = renderFileTree(data.files);
-                
-                // Animate new items
+
                 return gsap.from('.file-item, .directory-item', {
                     opacity: 0,
                     x: -20,
@@ -541,14 +529,12 @@ function loadWorkspaceFiles() {
         });
 }
 
-// Make loadWorkspaceFiles globally available
 window.loadWorkspaceFiles = loadWorkspaceFiles;
 
 let activeContextItem = null;
 
-// Update renderFileTree function to fix event handling
 function renderFileTree(items) {
-    // Sort items based on current sort order
+
     items.sort((a, b) => {
         if (settings.sortOrder === 'type') {
             if (a.type === b.type) {
@@ -612,9 +598,9 @@ function toggleDirectory(element) {
     const directoryItem = element.closest('.directory-item');
     const content = directoryItem.querySelector('.directory-content');
     const icon = element.querySelector('.material-icons');
-    
+
     const isExpanded = directoryItem.classList.contains('expanded');
-    
+
     if (isExpanded) {
         gsap.to(content, {
             height: 0,
@@ -640,11 +626,11 @@ function toggleDirectory(element) {
 }
 
 function hideContextMenus() {
-    // This function can be removed if not used elsewhere
+
 }
 
 function showContextMenu() {
-    // This function can be removed
+
 }
 
 function handleContextAction(action, type) {
@@ -758,18 +744,16 @@ function deleteItem(path, type) {
     });
 }
 
-// Initialize editor state
 function initializeEditor() {
-    updateTabBar(); // This will now show the placeholder by default
+    updateTabBar(); 
     document.getElementById('editor').disabled = true;
     updateLineNumbers();
 }
 
-// Modify the DOMContentLoaded event
 document.addEventListener('DOMContentLoaded', () => {
-    // Replace sidebar animation with new sequence
+
     const tl = gsap.timeline();
-    
+
     tl.from('.side-panel', {
         x: -50,
         opacity: 0,
@@ -788,12 +772,10 @@ document.addEventListener('DOMContentLoaded', () => {
         stagger: 0.1
     }, "-=0.2");
 
-    // Initialize workspace files after panel animation
     setTimeout(loadWorkspaceFiles, animations.sidebar.panel.duration * 1000);
 
     initializeEditor();
 
-    // Initial load animations
     gsap.from('.main-content', {
         opacity: 0,
         duration: 0.5,
@@ -811,10 +793,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadSettings();
 
-    // Add settings close button handler
     document.getElementById('settings-close').addEventListener('click', closeSettings);
-    
-    // Add ESC key handler for settings
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const panel = document.querySelector('.settings-panel');
@@ -824,7 +804,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add new setting listeners
     document.getElementById('ui-density').addEventListener('change', function(e) {
         settings.density = e.target.value;
         saveSettings();
@@ -843,27 +822,23 @@ document.addEventListener('DOMContentLoaded', () => {
         applyCursorStyle(e.target.value);
     });
 
-    // Initialize all toggles
     const toggles = document.querySelectorAll('.toggle input[type="checkbox"]');
     toggles.forEach(toggle => {
-        // Set initial state
+
         const indicator = toggle.nextElementSibling.querySelector('.toggle-indicator');
         toggle.checked = settings[toggle.id.replace(/-/g, '')] || false;
         gsap.set(indicator, { x: toggle.checked ? 20 : 0 });
-        
-        // Add change listener
+
         toggle.addEventListener('change', function() {
             const isChecked = this.checked;
             const indicator = this.nextElementSibling.querySelector('.toggle-indicator');
-            
-            // Animate toggle indicator
+
             gsap.to(indicator, {
                 x: isChecked ? 20 : 0,
                 duration: 0.3,
                 ease: "power2.out"
             });
-            
-            // Update settings based on toggle ID
+
             switch(this.id) {
                 case 'show-extensions':
                     settings.showExtensions = isChecked;
@@ -894,14 +869,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     break;
             }
-            
-            // Save settings after any change
+
             saveSettings();
         });
     });
 });
 
-// Add save shortcut handler
 document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
@@ -912,14 +885,13 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Settings handling
 function openSettings() {
     const panel = document.querySelector('.settings-panel');
-    const settingsBtn = document.getElementById('settings-btn'); // Updated selector
-    
+    const settingsBtn = document.getElementById('settings-btn'); 
+
     panel.classList.add('open');
     settingsBtn.disabled = true;
-    
+
     gsap.fromTo(panel,
         { opacity: 0, y: 20 },
         { 
@@ -934,8 +906,8 @@ function openSettings() {
 
 function closeSettings() {
     const panel = document.querySelector('.settings-panel');
-    const settingsBtn = document.getElementById('settings-btn'); // Updated selector
-    
+    const settingsBtn = document.getElementById('settings-btn'); 
+
     gsap.to(panel, {
         opacity: 0,
         y: 20,
@@ -949,7 +921,6 @@ function closeSettings() {
     });
 }
 
-// Update settings object to include new options
 let settings = {
     showExtensions: true,
     autoSave: false,
@@ -962,7 +933,6 @@ let settings = {
     autoBackup: false
 };
 
-// Add this function near the top, after settings object
 function saveSettings() {
     try {
         localStorage.setItem('editor-settings', JSON.stringify(settings));
@@ -976,21 +946,18 @@ function loadSettings() {
     if (savedSettings) {
         settings = { ...settings, ...JSON.parse(savedSettings) };
     }
-    
-    // Update UI to match settings
+
     updateSettingButton('show-extensions', settings.showExtensions);
     updateSettingButton('auto-save', settings.autoSave);
     updateSettingButton('line-wrap', settings.lineWrap);
     updateSettingButton('auto-backup', settings.autoBackup);
-    
-    // Initialize other settings
+
     document.querySelector(`input[name="theme"][value="${settings.theme}"]`).checked = true;
     document.getElementById('ui-density').value = settings.density;
     document.getElementById('font-family').value = settings.fontFamily;
     document.getElementById('cursor-style').value = settings.cursorStyle;
     document.getElementById('sort-order').value = settings.sortOrder;
-    
-    // Apply settings
+
     if (settings.autoSave) enableAutoSave();
     if (settings.autoBackup) enableAutoBackup();
     if (settings.lineWrap) {
@@ -1008,10 +975,8 @@ function updateSettingButton(id, isEnabled) {
     button.querySelector('.button-label').textContent = isEnabled ? 'On' : 'Off';
 }
 
-// Add button click handlers
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Add click handlers for setting buttons
     const settingButtons = document.querySelectorAll('.setting-button');
     settingButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -1019,7 +984,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isEnabled = this.dataset.state !== 'on';
                 this.dataset.state = isEnabled ? 'on' : 'off';
                 this.querySelector('.button-label').textContent = isEnabled ? 'On' : 'Off';
-                
+
                 const settingId = this.id;
                 switch(settingId) {
                     case 'show-extensions':
@@ -1051,10 +1016,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         break;
                 }
-                
+
                 saveSettings();
-                
-                // Animate button press
+
                 gsap.to(this, {
                     scale: 0.95,
                     duration: 0.1,
@@ -1069,20 +1033,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Add auto-save functionality
 let autoSaveTimeout;
 function enableAutoSave() {
     document.getElementById('editor').addEventListener('input', function() {
         if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
         if (!settings.autoSave || !activeTab) return;
-        
+
         autoSaveTimeout = setTimeout(() => {
             saveContent();
         }, 1000);
     });
 }
 
-// Add file settings handlers
 document.getElementById('show-extensions').addEventListener('change', function(e) {
     settings.showExtensions = e.target.checked;
     saveSettings();
@@ -1104,13 +1066,13 @@ document.getElementById('auto-backup').addEventListener('change', function(e) {
 });
 
 function enableAutoBackup() {
-    // Create backup when saving files
+
     const originalSaveContent = window.saveContent;
     window.saveContent = async function() {
         if (!activeTab) return;
-        
+
         await originalSaveContent();
-        
+
         if (settings.autoBackup) {
             createBackup(activeTab.filepath);
         }
@@ -1120,7 +1082,7 @@ function enableAutoBackup() {
 function createBackup(filepath) {
     const content = document.getElementById('editor').value;
     const timestamp = new Date().toISOString().replace(/[:\.]/g, '-');
-    
+
     fetch('/create-backup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1132,7 +1094,6 @@ function createBackup(filepath) {
     });
 }
 
-// Update the renderFileTree function to handle file extensions
 function getDisplayName(name, type) {
     if (type === 'directory' || settings.showExtensions) {
         return name;
@@ -1140,11 +1101,10 @@ function getDisplayName(name, type) {
     return name.substring(0, name.lastIndexOf('.')) || name;
 }
 
-// Add event listener for the setting
 document.getElementById('show-extensions').addEventListener('change', function(e) {
     settings.showExtensions = e.target.checked;
     saveSettings();
-    loadWorkspaceFiles(); // Refresh the file tree
+    loadWorkspaceFiles(); 
 });
 
 let isPreviewMode = false;
@@ -1152,22 +1112,21 @@ let previewTimeout = null;
 
 function updatePreview() {
     if (!isPreviewMode || !activeTab?.filepath.endsWith('.mne')) return;
-    
+
     const preview = document.querySelector('.mne-preview');
     const content = document.getElementById('editor').value;
     preview.innerHTML = MNEParser.preview(content);
 }
 
-// Replace simple debounce with more robust version
 function debouncePreview() {
     if (previewTimeout) {
         clearTimeout(previewTimeout);
         previewTimeout = null;
     }
-    
+
     previewTimeout = setTimeout(() => {
         updatePreview();
-        // Clear the timeout reference
+
         previewTimeout = null;
     }, 150);
 }
@@ -1175,12 +1134,17 @@ function debouncePreview() {
 document.getElementById('editor').addEventListener('input', debouncePreview);
 
 function togglePreview() {
-    if (!activeTab || !activeTab.filepath.endsWith('.mne')) return;
+    if (!activeTab?.filepath.endsWith('.mne')) return;
+
+    if (activeTab.filepath.startsWith('script')) {
+        showToast('Preview is not available for automation scripts', 'info');
+        return;
+    }
 
     const editor = document.getElementById('editor');
     const editorWrapper = editor.parentElement;
     let preview = document.querySelector('.mne-preview');
-    
+
     if (!preview) {
         preview = document.createElement('div');
         preview.className = 'mne-preview';
@@ -1188,9 +1152,9 @@ function togglePreview() {
     }
 
     isPreviewMode = !isPreviewMode;
-    
+
     const tl = gsap.timeline();
-    
+
     if (isPreviewMode) {
         preview.style.display = 'block';
         tl.to(editor, {
@@ -1204,7 +1168,7 @@ function togglePreview() {
             duration: animations.slideIn.duration,
             ease: animations.slideIn.ease
         }, "-=0.3");
-        
+
         updatePreview();
     } else {
         tl.to(preview, {
@@ -1222,11 +1186,15 @@ function togglePreview() {
     }
 }
 
-// Add shortcut for preview toggle
 document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
         e.preventDefault();
         if (activeTab && activeTab.filepath.endsWith('.mne')) {
+
+            if (activeTab.filepath.startsWith('script')) {
+                showToast('Preview is not available for automation scripts', 'info');
+                return;
+            }
             togglePreview();
         }
     }
@@ -1234,34 +1202,33 @@ document.addEventListener('keydown', function(e) {
 
 let hintTimeout = null;
 let lastHintTime = 0;
-const HINT_INTERVAL = 30000; // Show hint every 30 seconds
+const HINT_INTERVAL = 30000; 
 
 function showPreviewHint() {
     if (!activeTab?.filepath.endsWith('.mne')) return;
-    if (isPreviewMode) return; // Don't show hint if preview is already active
-    
+    if (isPreviewMode) return;
+
+    if (activeTab.filepath.startsWith('script')) return;
+
     const now = Date.now();
     if (now - lastHintTime < HINT_INTERVAL) return;
-    
+
     lastHintTime = now;
     showToast('Press Ctrl+P to preview', 'lightbulb');
 }
 
-// Add settings navigation
 document.querySelectorAll('.settings-nav-item').forEach(item => {
     item.addEventListener('click', () => {
-        // Update active nav item
+
         document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
-        
-        // Show corresponding section
+
         const sectionId = `${item.dataset.section}-section`;
         document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
         document.getElementById(sectionId).classList.add('active');
     });
 });
 
-// Add ESC key handler for settings
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         const panel = document.querySelector('.settings-panel');
@@ -1271,7 +1238,6 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Add theme selection handler
 document.querySelectorAll('input[name="theme"]').forEach(input => {
     input.addEventListener('change', function(e) {
         const newTheme = e.target.value;
@@ -1282,12 +1248,11 @@ document.querySelectorAll('input[name="theme"]').forEach(input => {
 });
 
 function applyTheme(theme) {
-    // Remove all theme classes
+
     document.body.classList.remove('theme-dark', 'theme-darker', 'theme-light');
-    // Add new theme class
+
     document.body.classList.add(`theme-${theme}`);
-    
-    // Animate the transition
+
     gsap.fromTo(document.body,
         { opacity: 0.8 },
         { 
@@ -1297,7 +1262,6 @@ function applyTheme(theme) {
         }
     );
 
-    // Show confirmation toast
     showToast(`Theme changed to ${theme}`, 'palette');
 }
 
@@ -1305,7 +1269,6 @@ function showToast(message, icon = 'info') {
     toastManager.show(message, icon);
 }
 
-// Add new setting handlers
 function applyDensity(density) {
     document.body.classList.remove('density-compact', 'density-comfortable', 'density-spacious');
     document.body.classList.add(`density-${density}`);
@@ -1324,11 +1287,10 @@ function applyCursorStyle(style) {
     showToast(`Cursor style changed to ${style}`, 'text_fields');
 }
 
-// Toast management system
 const toastManager = {
     queue: [],
     isDisplaying: false,
-    minInterval: 2000, // Minimum time between toasts
+    minInterval: 2000, 
     lastToastTime: 0,
 
     show(message, icon = 'info') {
@@ -1384,20 +1346,17 @@ const toastManager = {
     }
 };
 
-// Replace existing showToast function with this
 function showToast(message, icon = 'info') {
     toastManager.show(message, icon);
 }
 
-// Update settings button handlers
 function initializeSettingButtons() {
     const settingButtons = document.querySelectorAll('.setting-button');
     settingButtons.forEach(button => {
         button.addEventListener('click', function() {
             const isEnabled = this.dataset.state !== 'on';
             const settingId = this.id;
-            
-            // Animate button press
+
             gsap.to(this, {
                 scale: 0.95,
                 duration: 0.1,
@@ -1407,8 +1366,7 @@ function initializeSettingButtons() {
                 onComplete: () => {
                     this.dataset.state = isEnabled ? 'on' : 'off';
                     this.querySelector('.button-label').textContent = isEnabled ? 'On' : 'Off';
-                    
-                    // Handle setting changes
+
                     handleSettingChange(settingId, isEnabled);
                 }
             });
@@ -1451,28 +1409,25 @@ function handleSettingChange(settingId, isEnabled) {
     saveSettings();
 }
 
-// Update the preview hint function
 function showPreviewHint() {
     if (!activeTab?.filepath.endsWith('.mne')) return;
-    if (isPreviewMode) return; // Don't show hint if preview is already active
-    
+    if (isPreviewMode) return; 
+
     const now = Date.now();
     if (now - lastHintTime < HINT_INTERVAL) return;
-    
+
     lastHintTime = now;
     showToast('Press Ctrl+P to preview', 'lightbulb');
 }
 
-// Add this to the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
     initializeSettingButtons();
-    
-    // Improve settings panel animations
+
     document.querySelectorAll('.settings-nav-item').forEach(item => {
         item.addEventListener('click', () => {
             const sectionId = item.dataset.section;
             const targetSection = document.getElementById(`${sectionId}-section`);
-            
+
             gsap.to('.settings-section.active', {
                 opacity: 0,
                 y: 20,
@@ -1481,10 +1436,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 onComplete: () => {
                     document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
                     document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
-                    
+
                     item.classList.add('active');
                     targetSection.classList.add('active');
-                    
+
                     gsap.fromTo(targetSection,
                         { opacity: 0, y: 20 },
                         { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
@@ -1495,15 +1450,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Replace the existing settings handling code with this updated version
 function initializeSettings() {
-    // Load saved settings
+
     const savedSettings = localStorage.getItem('editor-settings');
     if (savedSettings) {
         settings = { ...settings, ...JSON.parse(savedSettings) };
     }
 
-    // Initialize button states
     Object.entries(settings).forEach(([key, value]) => {
         if (typeof value === 'boolean') {
             const button = document.getElementById(key.replace(/([A-Z])/g, '-$1').toLowerCase());
@@ -1514,21 +1467,18 @@ function initializeSettings() {
         }
     });
 
-    // Initialize select inputs
     document.getElementById('ui-density').value = settings.density;
     document.getElementById('font-family').value = settings.fontFamily;
     document.getElementById('cursor-style').value = settings.cursorStyle;
     document.getElementById('sort-order').value = settings.sortOrder;
-    
-    // Initialize theme
+
     document.querySelector(`input[name="theme"][value="${settings.theme}"]`).checked = true;
 
-    // Apply current settings
     applyAllSettings();
 }
 
 function applyAllSettings() {
-    // Apply all current settings
+
     if (settings.autoSave) enableAutoSave();
     if (settings.autoBackup) enableAutoBackup();
     if (settings.lineWrap) {
@@ -1541,7 +1491,7 @@ function applyAllSettings() {
 }
 
 function handleSettingChange(settingId, isEnabled) {
-    // Update the settings object
+
     switch(settingId) {
         case 'show-extensions':
             settings.showExtensions = isEnabled;
@@ -1573,23 +1523,18 @@ function handleSettingChange(settingId, isEnabled) {
             }
             break;
     }
-    
-    // Save settings to localStorage
+
     saveSettings();
 }
 
-// Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Initialize settings
     initializeSettings();
 
-    // Single event handler for all setting buttons
     document.querySelectorAll('.setting-button').forEach(button => {
         button.addEventListener('click', function() {
             const isEnabled = this.dataset.state !== 'on';
-            
-            // Animate button press
+
             gsap.to(this, {
                 scale: 0.95,
                 duration: 0.1,
@@ -1605,7 +1550,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Remove old event listeners and use these instead
     document.getElementById('ui-density').addEventListener('change', function(e) {
         settings.density = e.target.value;
         saveSettings();
@@ -1630,7 +1574,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadWorkspaceFiles();
     });
 
-    // Theme selection handler
     document.querySelectorAll('input[name="theme"]').forEach(input => {
         input.addEventListener('change', function(e) {
             settings.theme = e.target.value;
@@ -1640,21 +1583,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
 let isInitialLoad = true;
 
-// Replace the settings initialization code
 function initializeSettings() {
-    // Load saved settings first
+
     const savedSettings = localStorage.getItem('editor-settings');
     if (savedSettings) {
         settings = { ...settings, ...JSON.parse(savedSettings) };
     }
 
-    // Initialize UI without triggering notifications
     isInitialLoad = true;
-    
-    // Initialize setting buttons
+
     Object.entries(settings).forEach(([key, value]) => {
         if (typeof value === 'boolean') {
             const button = document.getElementById(key.replace(/([A-Z])/g, '-$1').toLowerCase());
@@ -1665,20 +1604,16 @@ function initializeSettings() {
         }
     });
 
-    // Initialize select inputs
     document.getElementById('ui-density').value = settings.density;
     document.getElementById('font-family').value = settings.fontFamily;
     document.getElementById('cursor-style').value = settings.cursorStyle;
     document.getElementById('sort-order').value = settings.sortOrder;
-    
-    // Initialize theme
+
     const themeInput = document.querySelector(`input[name="theme"][value="${settings.theme}"]`);
     if (themeInput) themeInput.checked = true;
 
-    // Apply all settings silently
     applyAllSettings(true);
-    
-    // Reset initial load flag after initialization
+
     setTimeout(() => {
         isInitialLoad = false;
     }, 1000);
@@ -1696,18 +1631,16 @@ function applyAllSettings(silent = false) {
     applyCursorStyle(settings.cursorStyle, silent);
 }
 
-// Update the toast show function to respect initial load
 function showToast(message, icon = 'info') {
     if (!isInitialLoad) {
         toastManager.show(message, icon);
     }
 }
 
-// Update the theme application function
 function applyTheme(theme, silent = false) {
     document.body.classList.remove('theme-dark', 'theme-darker', 'theme-light');
     document.body.classList.add(`theme-${theme}`);
-    
+
     gsap.fromTo(document.body,
         { opacity: 0.8 },
         { opacity: 1, duration: 0.3, ease: "power2.out" }
@@ -1718,7 +1651,6 @@ function applyTheme(theme, silent = false) {
     }
 }
 
-// Update other apply functions similarly
 function applyDensity(density, silent = false) {
     document.body.classList.remove('density-compact', 'density-comfortable', 'density-spacious');
     document.body.classList.add(`density-${density}`);
@@ -1743,10 +1675,9 @@ function applyCursorStyle(style, silent = false) {
     }
 }
 
-// Update the main settings change handler
 function handleSettingChange(settingId, isEnabled) {
     settings[settingId.replace(/-/g, '')] = isEnabled;
-    
+
     switch(settingId) {
         case 'show-extensions':
             loadWorkspaceFiles();
@@ -1773,25 +1704,22 @@ function handleSettingChange(settingId, isEnabled) {
             }
             break;
     }
-    
+
     saveSettings();
 }
 
-// Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Initialize settings first
+
     initializeSettings();
-    
-    // Remove all other setting button event listeners and use this single one
+
     document.querySelectorAll('.setting-button').forEach(button => {
-        // Remove any existing listeners first
+
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
-        
+
         newButton.addEventListener('click', function() {
             const isEnabled = this.dataset.state !== 'on';
-            
+
             gsap.to(this, {
                 scale: 0.95,
                 duration: 0.1,
@@ -1808,8 +1736,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
-// Add at the top with other globals
 const DEBOUNCE_DELAYS = {
     autoSave: 1000,
     preview: 150,
@@ -1828,19 +1754,17 @@ function debounce(func, wait) {
     };
 }
 
-// Replace saveContent function
 function saveContent() {
     if (!activeTab) return;
 
     const content = document.getElementById('editor').value;
     activeTab.content = content;
-    
+
     const saveButton = document.getElementById('save-btn');
     if (!saveButton) return;
-    
-    // Show loading state
+
     saveButton.classList.add('loading');
-    
+
     fetch('/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1863,7 +1787,7 @@ function saveContent() {
     .catch(error => {
         console.error('Save error:', error);
         showToast('Error saving file', 'error');
-        // Retry logic
+
         setTimeout(() => saveContent(), 2000);
     })
     .finally(() => {
@@ -1871,7 +1795,6 @@ function saveContent() {
     });
 }
 
-// Update auto-save implementation
 const debouncedSave = debounce(saveContent, DEBOUNCE_DELAYS.autoSave);
 
 function enableAutoSave() {
@@ -1882,7 +1805,6 @@ function enableAutoSave() {
     });
 }
 
-// Add error boundary for animations
 function safeAnimate(element, animation, options = {}) {
     if (!element) return;
     try {
@@ -1898,7 +1820,6 @@ function safeAnimate(element, animation, options = {}) {
     }
 }
 
-// Add auto-recovery for unsaved changes
 window.addEventListener('beforeunload', (e) => {
     if (activeTab && document.getElementById('editor').value !== activeTab.content) {
         const message = 'You have unsaved changes. Are you sure you want to leave?';
@@ -1907,23 +1828,23 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
-// Add script automation handling
-
-function runAutomation() {
+function runAutomation(event) {
+    if (event) {
+        event.stopPropagation(); 
+    }
     if (!activeTab?.filepath.startsWith('script')) {
         showToast('Automations only work in script files', 'warning');
         return;
     }
 
-    // Clean up any previous automation blocks
     MNEParser.cleanup();
-    
+
     const content = document.getElementById('editor').value;
-    
+
     try {
         const automations = MNEParser.runAutomation(content);
         if (automations.length > 0) {
-            // Run each automation block sequentially
+
             automations.reduce((promise, { id }) => {
                 return promise.then(() => MNEParser.executeAutomation(id));
             }, Promise.resolve())
@@ -1931,7 +1852,7 @@ function runAutomation() {
                 showToast('Automation failed: ' + error.message, 'error');
             })
             .finally(() => {
-                // Clean up after all automations are done
+
                 setTimeout(() => MNEParser.cleanup(), 1000);
             });
         }
@@ -1940,7 +1861,6 @@ function runAutomation() {
     }
 }
 
-// Add run button to editor when script file is opened
 function updateEditorToolbar() {
     const toolbar = document.querySelector('.editor-toolbar');
     if (!toolbar) return;
@@ -1960,14 +1880,12 @@ function updateEditorToolbar() {
     }
 }
 
-// Add automation status display
 document.body.insertAdjacentHTML('beforeend', `
     <div class="automation-status" style="opacity: 0; transform: translateY(20px)">
         <div class="terminal"></div>
     </div>
 `);
 
-// Add keyboard shortcut
 document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
         e.preventDefault();
@@ -1975,11 +1893,8 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Add tooltip for runnable files
 document.addEventListener('DOMContentLoaded', () => {
-    // ...existing code...
 
-    // Add tooltips for runnable files
     document.addEventListener('mouseover', e => {
         const fileItem = e.target.closest('.file-item[data-runnable="true"]');
         if (fileItem && !fileItem.title) {
