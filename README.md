@@ -1,4 +1,5 @@
 # LIDE (Lightweight Integrated Development Environment)
+**Personally, I have no intention on further adding any features for now, if you find a bug please create an issue and I will work towards fixing it.**
 
 A minimalist, browser-based text editor with modern features and a clean interface.
 
